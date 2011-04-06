@@ -112,7 +112,11 @@ module PrintMembers
     end
 
     CONF.each_pair do |k,v|
-      define_method(k) {|str=nil, &block| color @conf[k], str, &block } if k =~ /_color$/
+      class_eval %{
+        def #{k} str=nil, &block
+          color @conf[k], str, &block
+        end
+      } if k =~ /_color$/
     end
 
     def default_color str=nil, &block

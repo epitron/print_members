@@ -156,6 +156,11 @@ module PrintMembers
   end # module Ext
 end # module PrintMembers
 
+unless defined? BasicObject
+  module BasicObject
+  end
+end
+
 [String,Object,Kernel,BasicObject,Array].each do |mod|
   ext = PrintMembers::Ext.const_get(mod.name)
   mod.send :include, ext
@@ -312,18 +317,18 @@ class ::Module
   # "boring" for documentation purposes, because they appear in nearly all other classes/objects.
   # Note that +self+ and its includes are never boring, even if +self+ is in the boring list.
   def boring_classes
-    return [::Class, *::Class.included_modules,
-            ::Module, *::Module.included_modules,
-            ::Kernel, *::Kernel.included_modules,
-            ::Object, *::Object.included_modules,
-            ::BasicObject, *::BasicObject.included_modules].uniq
+    return [::Class, ::Class.included_modules,
+            ::Module, ::Module.included_modules,
+            ::Kernel, ::Kernel.included_modules,
+            ::Object, ::Object.included_modules,
+            ::BasicObject, ::BasicObject.included_modules].flatten.uniq
   end
 
   # Module (and Class) don't consider themselves to be boring.
   def self.boring_classes
-    return [::Kernel, *::Kernel.included_modules,
-            ::Object, *::Object.included_modules,
-            ::BasicObject, *::BasicObject.included_modules].uniq
+    return [::Kernel, ::Kernel.included_modules,
+            ::Object, ::Object.included_modules,
+            ::BasicObject, ::BasicObject.included_modules].flatten.uniq
   end
 
   # "Unboring" methods are simply those not inherited from any of the boring classes.
